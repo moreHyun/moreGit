@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="pool.manage.system.mapper">
+  
+  <resultMap type="pool.manage.system.common.MemberDTO" id="memberResultMap">
+  	<id property="memberCode" column="MEMBER_CODE"/>
+  	<result property="memberName" column="MEMBER_NAME"/>
+  	<result property="classPrice" column="CLASS_PRICE"/>
+  	<result property="categoryCode" column="CATEGORY_CODE"/>
+  	<result property="enrollmentStatus" column="ENROLLMENT_STATUS"/>
+  </resultMap>
+
+  <select id="selectAllMember" resultMap="memberResultMap">
+    SELECT
+           MEMBER_CODE
+         , MEMBER_NAME
+         , CLASS_PRICE
+         , CATEGORY_CODE
+         , ENROLLMENT_STATUS
+      FROM TBL_MEMBER
+     WHERE ENROLLMENT_STATUS = 'Y'
+     ORDER BY MEMBER_CODE
+  </select>
+  
+  <select id="selectMemberByCode" parameterType="_int" resultMap="memberResultMap">
+	SELECT
+           MEMBER_CODE
+         , MEMBER_NAME
+         , CLASS_PRICE
+         , CATEGORY_CODE
+         , ENROLLMENT_STATUS
+      FROM TBL_MEMBER
+     WHERE ENROLLMENT_STATUS = 'Y' 
+       AND MEMBER_CODE = #{ code }
+  </select>
+  
+  <!-- insert, update, delete의 경우 resultType을 작성하지 않는다. 기본 _int로 수행 결과 행의 갯수를 리턴한다. 
+  	   parameterType은 생략 가능하다.
+  	   파라미터로 전달 된 DTO의 필드 이름으로 값을 바인딩 해주어야 한다. getter를 이용하며 getter 없는 경우 에러 발생한다.
+  -->
+  <insert id="insertMember" parameterType="pool.manage.system.common.MemberDTO">
+  	INSERT
+  	  INTO TBL_MEMBER
+  	(
+  	  MEMBER_CODE
+  	, MEMBER_NAME
+  	, CLASS_PRICE
+  	, CATEGORY_CODE
+  	, ENROLLMENT_STATUS
+  	)
+  	VALUES
+  	(
+  	  SEQ_MEMBER_CODE.NEXTVAL
+  	, #{ memberName }
+  	, #{ classPrice }
+  	, #{ categoryCode }
+  	, 'Y'
+  	)
+  </insert>
+  
+  <update id="updateMember" parameterType="pool.manage.system.common.MemberDTO">
+  	UPDATE
+  	       TBL_MEMBER
+  	   SET MEMBER_NAME = #{ memberName }
+  	     , CLASS_PRICE = #{ classPrice }
+  	     , CATEGORY_CODE = #{ categoryCode }
+  	 WHERE MEMBER_CODE = #{ memberCode }
+  </update>
+  
+  <delete id="deleteMember" parameterType="_int">
+  	DELETE
+  	  FROM TBL_MEMBER
+  	 WHERE MEMBER_CODE = #{ memberCode }
+  </delete>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</mapper>
